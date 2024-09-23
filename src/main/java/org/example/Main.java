@@ -28,7 +28,7 @@ public class Main {
         System.out.println("Check Student For Both Course");
         course.checkForSameStudentsInDifferentCourse(2,3);*/
 
-        int[] arr = {8,3,7, 1, 99, 98};
+     /*   int[] arr = {8,3,7, 1, 99, 98};
         int currentNumber = 0;
         int max = 0;
         for(int i = 0; i < arr.length; i++){
@@ -54,7 +54,13 @@ public class Main {
             }
         }
         System.out.println(max);
-        System.out.println(currentNumber);
+        System.out.println(currentNumber);*/
 
+        CustomArrayList customArrayList = new CustomArrayList();
+        for(int i = 1; i <=15; i++){
+            customArrayList.addNumber(i);
+        }
+
+        customArrayList.print();
     }
 }
