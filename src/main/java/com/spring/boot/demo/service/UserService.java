@@ -82,15 +82,6 @@ public class UserService {
         }else{
             throw new EntityNotFoundException("User not found.");
         }
-//        if(userOpt.isPresent()){
-//            User user = userOpt.get();
-//            user.setStatus(false);
-//
-//            return this.userRepository.save(user);
-//
-//        }else{
-//            throw new EntityNotFoundException("User not found with id: "+id);
-//        }
     }
 
 

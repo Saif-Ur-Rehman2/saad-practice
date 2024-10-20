@@ -13,7 +13,6 @@ public class SaadspringApplication {
 		Address address = (Address) new User();
 		address.PrintData();
 
-
 	}
 
 }
