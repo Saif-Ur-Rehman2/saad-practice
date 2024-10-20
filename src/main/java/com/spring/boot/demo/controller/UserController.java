@@ -1,8 +1,8 @@
 package com.spring.boot.demo.controller;
 
 import com.spring.boot.demo.model.User;
+import com.spring.boot.demo.response.Message;
 import com.spring.boot.demo.service.UserService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,25 +18,23 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/signup")
-    ResponseEntity<String> addUser(@RequestBody User user){
-        String response = this.userService.addUser(user);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    ResponseEntity<Message<String>> addUser(@RequestBody User user){
+        return ResponseEntity.ok(this.userService.addUser(user));
     }
 
     @GetMapping("/all")
-    ResponseEntity<List<User>> getAll(){
-        List<User> list = this.userService.getAll();
-        return ResponseEntity.status(HttpStatus.OK).body(list);
+    ResponseEntity<Message<List<User>>> getAll(){
+        return ResponseEntity.ok(this.userService.getAll());
     }
 
     @GetMapping("/user/{id}")
-    ResponseEntity<User> get(@PathVariable("id") Long id) {
-        return this.userService.get(id);
+    ResponseEntity<Message<User>> get(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(this.userService.get(id));
     }
 
     @DeleteMapping("/delete/{id}")
-    Optional<User> deactivate(@PathVariable("id") Long id){
-        return this.userService.deactivate(id);
+    ResponseEntity<Message<User>> deactivate(@PathVariable("id") Long id){
+        return ResponseEntity.ok(this.userService.deactivate(id));
     }
 
     @PutMapping("/update/{id}")

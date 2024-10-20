@@ -13,19 +13,22 @@ import java.time.LocalDate;
 //@Getter
 //@Setter
 @Entity
-public class User {
+public class User extends Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
+     Long id;
+    public String name;
     private String password;
     private String email;
     private LocalDate createdAt;
     private Boolean status;
 
-    public User(){
+    public void PrintData() {
+        System.out.println("method of child class");
+    }
 
-  }
+    public User(){
+    }
 
     public Long getId() {
         return id;
@@ -74,4 +77,7 @@ public class User {
     public void setStatus(Boolean status) {
         this.status = status;
     }
+
+
+
 }

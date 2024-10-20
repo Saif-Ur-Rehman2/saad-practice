@@ -2,8 +2,10 @@ package com.spring.boot.demo.service;
 
 import com.spring.boot.demo.model.User;
 import com.spring.boot.demo.repository.UserRepository;
+import com.spring.boot.demo.response.Message;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -20,44 +22,75 @@ public class UserService {
     UserRepository userRepository;
 
     //User signing up
-    public String addUser(User user) {
+    public Message<String> addUser(User user) {
         user.setCreatedAt(LocalDate.now());
         user.setStatus(true);
         this.userRepository.save(user);
-        return "data saved successfully";
+        Message response = new Message();
+        response.setCode(HttpStatus.OK.value());
+        response.setStatus(HttpStatus.OK.name());
+        response.setMessage("User added successfully");
+        response.setData("User added successfully");
+        return response;
     }
 
 
 
     //Get all users
-    public List<User> getAll() {
+    public Message<List<User>> getAll() {
         List<User> list = this.userRepository.findAll();
-        return list;
+        if(!list.isEmpty()){
+            Message response = new Message();
+            response.setCode(HttpStatus.OK.value());
+            response.setStatus(HttpStatus.OK.name());
+            response.setMessage("User added successfully");
+            response.setData(list);
+            return response;
+        }
+        throw new EntityNotFoundException("Data not found");
+
     }
 
 
     //Get a specific user through id
-    public ResponseEntity<User> get(Long id) {
+    public Message<User> get(Long id) {
         Optional<User> userOpt = this.userRepository.findById(id);
-        if (userOpt.isPresent()) {
-            return ResponseEntity.ok(userOpt.get());
+        if (userOpt.isPresent()){
+            Message message = new Message();
+            message.setCode(HttpStatus.OK.value());
+            message.setStatus(HttpStatus.OK.name());
+            message.setMessage("User Found");
+            message.setData(userOpt);
+            return message;
         } else {
-            return ResponseEntity.notFound().build();
+            throw new EntityNotFoundException("not found");
         }
     }
 
 
     //Set the user status to false (SOFT DELETE)
-    public Optional<User> deactivate(Long id) {
+    public Message<User> deactivate(Long id) {
         Optional<User> userOpt = this.userRepository.findById(id);
+
         if(userOpt.isPresent()){
-            User user = userOpt.get();
-            user.setStatus(false);
-            this.userRepository.save(user);
+            Message message = new Message();
+            message.setCode(HttpStatus.OK.value());
+            message.setStatus(HttpStatus.OK.name());
+            message.setMessage("User Deactivated.");
+            message.setData("User Deactivated");
+            return message;
         }else{
-            throw new EntityNotFoundException("User not found with id: "+id);
+            throw new EntityNotFoundException("User not found.");
         }
-        return userOpt;
+//        if(userOpt.isPresent()){
+//            User user = userOpt.get();
+//            user.setStatus(false);
+//
+//            return this.userRepository.save(user);
+//
+//        }else{
+//            throw new EntityNotFoundException("User not found with id: "+id);
+//        }
     }
 
 
@@ -75,5 +108,9 @@ public class UserService {
             throw new EntityNotFoundException("User not found with id: "+id);
         }
         return userOpt;
+    }
+
+    public User findByIdAndStatus(Long id, Boolean status){
+        return this.userRepository.findByIdAndStatus(id, status).orElse(null);
     }
 }
