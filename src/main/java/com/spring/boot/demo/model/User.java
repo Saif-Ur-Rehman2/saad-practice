@@ -13,7 +13,7 @@ import java.time.LocalDate;
 //@Getter
 //@Setter
 @Entity
-public class User extends Address {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
      Long id;
@@ -23,9 +23,7 @@ public class User extends Address {
     private LocalDate createdAt;
     private Boolean status;
 
-    public void PrintData() {
-        System.out.println("method of child class");
-    }
+
 
     public User(){
     }
