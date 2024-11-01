@@ -23,15 +23,15 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    ResponseEntity<Message<List<User>>> getAll(){
-        return ResponseEntity.ok(this.userService.getAll());
+    ResponseEntity<Message<List<User>>> getAll(@RequestParam(value = "pageNumber", defaultValue = "1", required = false) Integer pageNumber,
+                                               @RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize){
+        return ResponseEntity.ok(this.userService.getAll(pageNumber, pageSize));
     }
 
     @GetMapping("/user/{id}")
     ResponseEntity<Message<User>> get(@PathVariable("id") Long id) {
         return ResponseEntity.ok(this.userService.get(id));
     }
-
     @DeleteMapping("/delete/{id}")
     ResponseEntity<Message<User>> deactivate(@PathVariable("id") Long id){
         return ResponseEntity.ok(this.userService.deactivate(id));

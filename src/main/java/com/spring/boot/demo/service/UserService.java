@@ -1,18 +1,20 @@
 package com.spring.boot.demo.service;
 
+import com.spring.boot.demo.exception.EntityNotFoundException;
+import com.spring.boot.demo.model.Article;
 import com.spring.boot.demo.model.User;
 import com.spring.boot.demo.repository.UserRepository;
 import com.spring.boot.demo.response.Message;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -37,8 +39,11 @@ public class UserService {
 
 
     //Get all users
-    public Message<List<User>> getAll() {
-        List<User> list = this.userRepository.findAll();
+    public Message<List<User>> getAll(Integer pageNumber, Integer pageSize) {
+
+        Pageable p = PageRequest.of(pageNumber, pageSize);
+        Page<User> page = this.userRepository.findAll(p);
+        List<User> list = page.getContent();
         if(!list.isEmpty()){
             Message response = new Message();
             response.setCode(HttpStatus.OK.value());
@@ -70,18 +75,17 @@ public class UserService {
 
     //Set the user status to false (SOFT DELETE)
     public Message<User> deactivate(Long id) {
-        Optional<User> userOpt = this.userRepository.findById(id);
+        User user = this.userRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Data not found."));
 
-        if(userOpt.isPresent()){
+            user.setStatus(false);
+            this.userRepository.save(user);
             Message message = new Message();
             message.setCode(HttpStatus.OK.value());
             message.setStatus(HttpStatus.OK.name());
             message.setMessage("User Deactivated.");
             message.setData("User Deactivated");
             return message;
-        }else{
-            throw new EntityNotFoundException("User not found.");
-        }
+
     }
 
 

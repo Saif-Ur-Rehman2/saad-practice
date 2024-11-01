@@ -1,6 +1,7 @@
 package com.spring.boot.demo.controller;
 
 
+import com.spring.boot.demo.dto.ArticleDTO;
 import com.spring.boot.demo.model.Article;
 import com.spring.boot.demo.response.Message;
 import com.spring.boot.demo.service.ArticleService;
@@ -25,8 +26,9 @@ public class ArticleController {
     }
 
     @GetMapping("/all-article")
-    public ResponseEntity<Message<List<Article>>> getArticle(){
-        return ResponseEntity.ok(this.articleService.getArticle());
+    public ResponseEntity<Message<List<Article>>> getArticle(@RequestParam(value = "pageNumber", defaultValue = "1", required = false) Integer pageNumber,
+                                                             @RequestParam(value = "pageSize", defaultValue = "5", required = false) Integer pageSize){
+        return ResponseEntity.ok(this.articleService.getArticle(pageNumber, pageSize));
     }
 
     @PutMapping("/status")

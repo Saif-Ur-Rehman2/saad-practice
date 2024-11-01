@@ -2,6 +2,7 @@ package com.spring.boot.demo.model;
 
 import jakarta.persistence.*;
 
+import java.awt.*;
 import java.time.LocalDate;
 
 @Entity
@@ -15,6 +16,8 @@ public class Article {
     private Boolean status;
     @ManyToOne
     private User user;
+
+    private String imagePath;
 
 
 
@@ -69,5 +72,11 @@ public class Article {
         this.user = user;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
 
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 }

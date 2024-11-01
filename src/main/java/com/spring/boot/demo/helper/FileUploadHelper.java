@@ -59,5 +59,9 @@ public class FileUploadHelper {
         return new FileInputStream(file);
     }
 
+    public String getFilePath(String fileName) {
+        return Paths.get(path, fileName).toString();
+    }
+
 
 }

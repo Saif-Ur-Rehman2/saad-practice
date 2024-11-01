@@ -1,23 +1,21 @@
 package com.spring.boot.demo.controller;
 
 
-import com.spring.boot.demo.exception.BadRequestException;
-import com.spring.boot.demo.exception.EntityNotFoundException;
-import com.spring.boot.demo.exception.InternalServerErrorException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spring.boot.demo.helper.FileUploadHelper;
 import com.spring.boot.demo.response.Message;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/file")
@@ -26,28 +24,41 @@ public class FileUploadController {
     @Autowired
     private FileUploadHelper fileUploadHelper;
 
-
     @PostMapping("/upload")
     public ResponseEntity<Message<String>> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
 
        return ResponseEntity.ok(this.fileUploadHelper.uploadFile(file));
     }
 
+//    @GetMapping("/get/{name}")
+//    public ResponseEntity<InputStream> getFile(@PathVariable("name") String name) throws FileNotFoundException {
+//
+//        return ResponseEntity.ok(this.fileUploadHelper.getFile(name));
+//
+//    }
+
     @GetMapping("/get/{name}")
-    public ResponseEntity<InputStreamResource> getFile(@PathVariable String name) {
-        try {
-            InputStream inputStream = this.fileUploadHelper.getFile(name);
-            InputStreamResource resource = new InputStreamResource(inputStream);
+    public ResponseEntity<byte[]> getFile(@PathVariable("name") String name) throws IOException {
+        // Get the full path to the file
+        String fullPath = this.fileUploadHelper.getFilePath(name); // You may need to add a method to get the full path
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // Set the correct media type if known
-            headers.setContentDispositionFormData("attachment", name);
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(resource);
-        } catch (FileNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        File file = new File(fullPath);
+        if (!file.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+
+        // Read file content into a byte array
+        byte[] content = Files.readAllBytes(file.toPath());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=" + file.getName());
+
+        String contentType = Files.probeContentType(file.toPath());
+        headers.add("Content-Type", contentType != null ? contentType : "application/octet-stream");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(content);
     }
 }
+

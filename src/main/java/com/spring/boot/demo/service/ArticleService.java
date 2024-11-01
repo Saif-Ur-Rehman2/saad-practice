@@ -1,6 +1,7 @@
 package com.spring.boot.demo.service;
 
 
+import com.spring.boot.demo.dto.ArticleDTO;
 import com.spring.boot.demo.exception.BadRequestException;
 import com.spring.boot.demo.exception.EntityNotFoundException;
 import com.spring.boot.demo.model.Article;
@@ -9,13 +10,17 @@ import com.spring.boot.demo.repository.ArticleRepository;
 import com.spring.boot.demo.response.Message;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Service
 public class ArticleService {
@@ -28,15 +33,17 @@ public class ArticleService {
 
     public Message<String> post(Article article) {
 
-        if(Objects.isNull(article.getUser().getId())){
+        if(Objects.isNull(article.getUser()) || Objects.isNull(article.getUser().getId())){
             throw new BadRequestException("User id is null");
         }
 
         User user = this.userService.findByIdAndStatus(article.getUser().getId(), true);
+
         if(Objects.nonNull(user)){
             article.setCreatedAt(LocalDate.now());
             article.setUser(user);
             article.setStatus(true);
+            article.setImagePath(article.getImagePath());
             this.articleRepository.save(article);
 
             Message message = new Message();
@@ -50,9 +57,12 @@ public class ArticleService {
         throw new EntityNotFoundException("User Not Found, Article cannot be posted against user id: "+article.getUser().getId());
     }
 
-    public Message<List<Article>> getArticle() {
+    public Message<List<Article>> getArticle(Integer pageNumber, Integer pageSize) {
 
-        List<Article> list = this.articleRepository.findByStatus(true);
+        Pageable p = PageRequest.of(pageNumber, pageSize);
+        Page<Article> page = this.articleRepository.findByStatus(true, p);
+        List<Article> list = page.getContent();
+
         if(!list.isEmpty()){
             Message message = new Message();
             message.setCode(HttpStatus.OK.value());
