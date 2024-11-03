@@ -1,7 +1,5 @@
 package com.spring.boot.demo.service;
-
 import com.spring.boot.demo.exception.EntityNotFoundException;
-import com.spring.boot.demo.model.Article;
 import com.spring.boot.demo.model.User;
 import com.spring.boot.demo.repository.UserRepository;
 import com.spring.boot.demo.response.Message;
@@ -11,10 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

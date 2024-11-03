@@ -8,10 +8,10 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-//@Data
-//@Builder
-//@Getter
-//@Setter
+@Data
+@Builder
+@Getter
+@Setter
 @Entity
 public class User {
     @Id

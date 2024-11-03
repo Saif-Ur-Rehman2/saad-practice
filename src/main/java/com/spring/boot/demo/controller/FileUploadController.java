@@ -1,7 +1,4 @@
 package com.spring.boot.demo.controller;
-
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spring.boot.demo.helper.FileUploadHelper;
 import com.spring.boot.demo.response.Message;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 
 @RestController
@@ -30,12 +24,6 @@ public class FileUploadController {
        return ResponseEntity.ok(this.fileUploadHelper.uploadFile(file));
     }
 
-//    @GetMapping("/get/{name}")
-//    public ResponseEntity<InputStream> getFile(@PathVariable("name") String name) throws FileNotFoundException {
-//
-//        return ResponseEntity.ok(this.fileUploadHelper.getFile(name));
-//
-//    }
 
     @GetMapping("/get/{name}")
     public ResponseEntity<byte[]> getFile(@PathVariable("name") String name) throws IOException {
